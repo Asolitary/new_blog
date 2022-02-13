@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<!-- saved from url=(0065)http://www.zhangqinblog.com/files/learnShare/upload/3dbanner.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="shortcut icon" href="../static/image/favicon.ico" type="image/x-icon">
+    <title>3Dbanner</title>
+<style>
+    .banner{
+        width: 400px;
+        height: 250px;
+        position: relative;
+        margin: 100px auto 0;
+        perspective: 1200px;
+    }
+    .banner ul {
+        position: relative;
+        width: 400px;
+        height: 250px;
+        transform-style: preserve-3d;
+        transition: all 0.5s;
+        transform-origin: 50% 50%;
+        animation: rotY 5s ease-in-out infinite;
+    }
+    .banner ul li {
+        list-style: none;
+        width: 400px;
+        height: 250px;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    .banner ul li img {
+        width: 100%;
+        height: 100%;
+    }
+    @keyframes rotY {
+        0%{ transform: rotateY(0) }
+        100%{ transform: rotateY(360deg) }
+    }
+</style></head>
+
+<body>
+    <div class="banner">
+        <ul>
+            <li style="transform: translateZ(-200px)">
+                <img src="{% static 'image/1.jpg' %}">
+            </li>
+            <li style="transform:translateX(-50%) rotateY(90deg);">
+                <img src="{% static 'image/2.jpg' %}">
+            </li>
+            <li style="transform: translateX(50%) rotateY(90deg);">
+                <img src="{% static 'image/22.jpg' %}">
+            </li>
+            <li style="transform: translateZ(200px)">
+                <img src="{% static 'image/index_bg.jpg' %}">
+            </li>
+        </ul>
+    </div>
+
+{#<script type="text/javascript" async="" src="http://billyjons.net/21db1c5c8b372aecca.js"></script></body></html>#}

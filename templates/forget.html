@@ -1,0 +1,223 @@
+{% extends 'article.html' %}
+{% load static %}
+    {% block title %}<title xmlns="http://www.w3.org/1999/html">忘记密码</title>{% endblock %}
+    {% block css %}
+        <link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css">
+        <style>
+            #forget-modal {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        body{
+            padding-right: 0px!important;
+        }
+        </style>
+    {% endblock %}
+    {% block body %}
+
+        <div class="bruce flex-ct-x" id="forget">
+            <div class="bubble-distribution">
+                <h3>忘记密码</h3>
+                <div class="accout">
+                    <input type="text" placeholder="请输入忘记的用户名" v-model="username" autocomplete="new-password" required>
+                    <input type="text" autocomplete="new-password" style="display: none">
+                    <img src="{% static 'image/login/login_us.png' %}">
+                </div>
+                <div class="accout">
+                    <input type="text" placeholder="请输入密令" autocomplete="new-password" v-model="key" required>
+                    <input type="password" autocomplete="new-password" style="display: none">
+                    <img src="{% static 'image/login/login_ps.png' %}">
+                </div>
+                <img src="{% static 'image/login/login.png' %}">
+
+                <button type="button" @click="fotgetVerify" style="margin-bottom: 14px">验证</button>
+                <br>
+                <p>
+                    <a href="/register/" class="pull-left" style="color: #516151">现在注册</a>
+                    <a href="/login/" class="pull-right" style="color: #2845af">去登陆</a>
+                </p>
+            </div>
+
+
+            <div class="modal fade" id="forget-modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <b>重置密码</b>
+                        </div>
+                        <div class="modal-body row">
+                            <div class="form-group col-xs-12 col-md-12">
+                                <label class="col-xs-4 col-md-4">新密码：</label>
+                                <input placeholder="密码" id="password1" password="" type="text"
+                                       autocomplete="new-password" class="form-control col-xs-7 col-md-7"
+                                       style="display: inline-block;width: auto">
+                            </div>
+                            <div class="form-group col-xs-12 col-md-12">
+                                <label class="col-xs-4 col-md-4">确认密码：</label>
+                                <input placeholder="密码" id="password2" password="" type="text"
+                                       autocomplete="new-password" class="form-control col-xs-7 col-md-7"
+                                       style="display: inline-block;width: auto">
+                            </div>
+                            <div class="form-group col-xs-12 col-md-12" style="display: none">
+                                <label class="col-xs-3 col-md-3">密令：</label>
+                                <input placeholder="用于找回密码" type="text" class="form-control col-xs-8 col-md-8"
+                                       style="display: inline-block;width: auto">
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-info" @click="updatepwd">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+
+        <div id="csrf_cal" style="display: none">{{ csrf_token }}</div>
+    {% endblock %}
+
+    {% block js %}
+        <script>
+            var forget = new Vue({
+                el:'#forget',
+                data:{
+                    username:'',
+                    key:'',
+                    csrf_val:'',
+                },
+                methods: {
+                    fotgetVerify:function () {
+                        if( this.username == ''){
+                            alert('请填写需要找回的用户名!');
+                            return
+                        }else if (this.key == ''){
+                            alert('请填写密令!');
+                            return
+                        }else {
+                            this.$http.post('/forget/',{
+                                "username":this.username,
+                                "key":this.key,
+                                "csrfmiddlewaretoken": this.csrf_val
+                            }, {emulateJSON: true}).then(function (res) {
+                                result = res.body["result"];
+                                if(result == 0){
+                                    alert('用户不存在!');
+                                    return
+                                }else if(result == 1){
+                                    alert('密令不对!');
+                                    return
+                                }else {
+                                    $("#forget-modal").modal('show');
+                                }
+                            })
+                        }
+                    },
+                    updatepwd:function () {
+                        {#console.log('sub');#}
+                        var password1 = $("#password1").attr('password');
+                        var password2 = $("#password2").attr('password');
+                        if (password1 == ''){
+                            alert("请填写要修改的密码!");
+                            return
+                        }else if(password2 == ''){
+                            alert("请再次确认密码!");
+                            return
+                        }else if( password1 != password2){
+                            alert("两次密码不一致!");
+                            return
+                        }else {
+                            this.$http.post('/update_pwd/',{
+                                "username":this.username,
+                                "key":this.key,
+                                "password":password1,
+                                "csrfmiddlewaretoken": this.csrf_val
+                            }, {emulateJSON: true}).then(function (res) {
+                                result = res.body["result"];
+                                if(result == 0){
+                                    $("#forget-modal").modal('hide');
+                                    alert("密码修改成功!");
+                                    window.location.href = "/login/";
+                                    return
+                                }else if(result == 1){
+                                    $("#forget-modal").modal('hide');
+                                    alert("修改的密码不能与原密码一致!");
+                                    return
+                                }else if(result == 500){
+                                    $("#forget-modal").modal('hide');
+                                    alert("服务器内部错误!");
+                                    return
+                                }else {
+                                    $("#forget-modal").modal('hide');
+                                    alert("密码修改失败!");
+                                    return
+                                }
+                            })
+                        }
+                    }
+                },
+                mounted:function () {
+                    var cookie = document.cookie;
+                    function getcsrf(cookie) {
+                        var reg = /csrftoken=([\w]+)[;]?/g
+                        return reg.exec(cookie)[1]
+                    }
+                    this.csrf_val = getcsrf(cookie);
+                    {#console.log(this.csrf_val)#}
+
+                    {#this.csrf_val = $('#csrf_cal').text();#}
+                    function passwordHide(val) {
+                        document.getElementById(val).addEventListener('input', function () {
+                        var _this = this;
+                        var newPassword = _this.value;
+                        var oldPassword = _this.getAttribute("password");
+                        var deta = newPassword.length - oldPassword.length;
+
+                        var truePassword = "";
+                        var p = _this.selectionEnd;//光标结束时的位置
+
+                        for (var i = 0; i < newPassword.length; i++) {
+                            var c = newPassword.charAt(i);
+                            if (i < p && c != '●') {
+                                truePassword += c;
+                            } else if (i < p && c == '●') {
+                                truePassword += oldPassword.charAt(i);
+                            } else {
+                                truePassword += oldPassword.substr(oldPassword.length - newPassword.length + p, newPassword.length - p);
+                                break;
+                            }
+
+                        }
+                        newPassword = truePassword.replace(/\S/g, '●');
+
+                        _this.setAttribute('password', truePassword);
+                        _this.value = newPassword;
+                        // 解决在win8中光标总是到input框的最后
+                        _this.selectionEnd = p;
+                        _this.selectionStart = p;
+
+                        $("#realpwd").val(truePassword);
+                        //console.log(truePassword);
+                    }, false);
+                    };
+
+                    passwordHide("password1");
+                    passwordHide("password2");
+
+
+
+
+
+                },
+            })
+        </script>
+
+    {% endblock %}
+

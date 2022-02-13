@@ -1,0 +1,141 @@
+{% extends 'article.html' %}
+{% load static %}
+{% load my_tags %}
+{% block title %}<title>我的博客</title>{% endblock %}
+{% block css %}
+    <style>
+        .pagination {
+            position: relative;
+            left: 50%;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="container-fixed">
+        <div class="col-content">
+            <div class="inner">
+                <article class="article-list bloglist" id="LAY_bloglist" >
+
+                    {% for blog in data.blogs %}
+                            <section class="article-item zoomIn article">
+{#                            <div class="fc-flag">置顶</div>#}
+                            <h5 class="title">
+{#                                <span class="fc-blue">【最新原创】</span>#}
+                                <a href="/blog_content/{{ blog.pk }}/">{{ blog.title }}</a>
+                            </h5>
+                            <div class="time">
+                                <span class="day">{{ blog.created_time|date:"d" }}</span>
+                                <span class="month fs-18">{{ blog.created_time|date:"m" }}<span class="fs-14">月</span></span>
+                                <span class="year fs-18 ml10">{{ blog.created_time|date:"Y" }}</span>
+                            </div>
+                            <div class="content">
+                                <a href="/blog_content/{{ blog.pk }}/" class="cover img-light">
+                                    <img src='../media/{{ blog.img }}'>
+                                </a>
+                                {{ blog.body|noImg|noHtml:257 }}
+                            </div>
+{#                                    <div class="read-more">#}
+{#                                        <a href="/blog_content/{{ blog.pk }}/" class="fc-black f-fwb">继续阅读</a>#}
+{#                                    </div>#}
+                            <aside class="f-oh footer" style="border-top: 1px solid #e8e9e7;padding-top: 5px">
+                                <div class="f-fl tags">
+                                    <span class="fa fa-tags fs-16"></span>
+                                    {% for tag in blog.tags.all %}<a class="tag">{{ tag }}</a>{% endfor %}
+                                </div>
+                                <div class="f-fr">
+                                    <span class="read">
+                                        <i class="fa fa-eye fs-16"></i>
+                                        <i class="num">{{ blog.visiting }}</i>
+                                    </span>
+                                    <span class="ml20">
+                                        <i class="fa fa-comments fs-16"></i>
+                                        <a href="javascript:void(0)" class="num fc-grey">{{ blog.comment_set.all.count }}</a>
+                                    </span>
+                                </div>
+                            </aside>
+                        </section>
+                        {% endfor %}
+
+                    <nav aria-label="Page navigation" class="paginator">
+                        <ul class="pagination">
+                            <li>
+                                {% if data.page.page_of_blogs.has_previous %}
+                                    <a href="?page={{ data.page.page_of_blogs.previous_page_number }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                {% else %}
+                                    <span aria-hidden="true">&laquo;</span>
+                                {% endif %}
+                            </li>
+                            {% for page_num in data.page.blog_page_range %}
+                                {% if page_num == data.page.page_of_blogs.number %}
+                                    <li class="active"><span>{{ page_num }}</span></li>
+                                {% else %}
+                                    {% if page_num == '...' %}
+                                        <li><span>{{ page_num }}</span></li>
+                                    {% else %}
+                                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            <li>
+                                {% if data.page.page_of_blogs.has_next %}
+                                    <a href="?page={{ data.page.page_of_blogs.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                {% else %}
+                                    <span aria-hidden="true">&raquo;</span>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </nav>
+
+
+                </article>
+            </div>
+        </div>
+        <div class="col-other">
+            <div class="inner">
+                <div class="other-item" id="categoryandsearch">
+                    <div class="search">
+                        <label class="search-wrap">
+                            <input type="text" id="searchtxt" placeholder="输入关键字搜索" />
+                            <span class="search-icon">
+                                <i class="fa fa-search"></i>
+                            </span>
+                        </label>
+                        <ul class="search-result"></ul>
+                    </div>
+                    <ul class="category mt20" id="category">
+                        <li data-index="0" class="slider"></li>
+                        <li data-index="1"><a href="/blog_category/all">全部文章</a></li>
+                        {% for category in data.categorys %}
+                            <li data-index="{{ forloop.counter|add:1 }}"><a href="/blog_category/{{ category.name }}">{{ category.name }}</a></li>
+                            {% empty %}
+                            <li data-index="2"><a href="javascript:void(0)">暂无其它分类</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <!--右边悬浮 平板或手机设备显示-->
+                <div class="category-toggle"><i class="layui-icon">&#xe603;</i></div>
+                <div class="article-category">
+                    <div class="article-category-title">分类导航</div>
+                        <a href="/blog_category/all">全部文章</a>
+                        {% for category in data.categorys %}
+                            <a href="/blog_category/{{ category.name }}">{{ category.name }}</a>
+                            {% empty %}
+                            <a href="javascript:void(0)">暂无其它分类</a>
+                        {% endfor    %}
+                    <div class="f-cb"></div>
+                </div>
+                <!--遮罩-->
+                <div class="blog-mask animated layui-hide"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+{% endblock %}

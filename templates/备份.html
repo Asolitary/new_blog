@@ -1,0 +1,333 @@
+{% extends 'article.html' %}
+{% load static %}
+    {% block title %}<title xmlns="http://www.w3.org/1999/html">登录</title>{% endblock %}
+    {% block css %}
+        <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/animate.min.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'yz/css/yz.css' %}" rel="stylesheet" type="text/css">
+        <style>
+            button {
+                border-radius: 20px !important;
+            }
+
+            {#移除点击后的边框#}
+            .btn:focus,
+            .btn:active:focus,
+            .btn.active:focus,
+            .btn.focus,
+            .btn:active.focus,
+            .btn.active.focus {
+                outline: none;
+                border-color: transparent;
+                box-shadow:none;
+            }
+            .box {
+                margin: 0 auto;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                height: 420px;
+                width: 300px;
+                margin-left: -150px;
+                margin-top: -210px;
+                border: 1px solid #ccc;
+                background-color: #fff;
+                border-radius: 25px;
+                display: none;
+                z-index: 2;
+            }
+
+            .top-s {
+                font-size: 12px;
+                color: #ccc;
+                display: block;
+                text-align: center;
+                margin-left: 25px;
+                margin-top: 25px;
+                margin-bottom: 5px;
+            }
+
+            .top-x {
+                font-size: 18px;
+                color: black;
+                display: block;
+                text-align: center;
+                margin-bottom: 45px;
+            }
+
+            .cuo {
+                float: right;
+                margin-right: 10px;
+                margin-top: 5px;
+                cursor: pointer;
+            }
+
+            .block__cell {
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%, -50%);
+            }
+            .modal {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            body{
+                padding-right: 0px!important;
+            }
+        </style>
+    {% endblock %}
+    {% block body %}
+        <div class="g-wrap"></div>
+        <div class="g-container" id="login-div">
+            <div>
+                <h2 class="pull-left" style="padding: 6px 12px">登录</h2>
+                <button class="btn btn-danger pull-right" type="submit" id="verify">人机验证</button>
+            </div>
+            <div class="g-username form-group">
+                <input name="loginPhoneOrEmail" maxlength="64" placeholder="快点输入账号" autocomplete="new-password" class="input" type="text" v-model="username">
+                <img src="{% static 'image/login/login_us.png' %}" class="g-username">
+            </div>
+            <div class="g-password form-group">
+                <input name="loginPassword" type="password" maxlength="64" placeholder="快点输入密码" autocomplete="new-password" class="input" v-model="password">
+                <img src="{% static 'image/login/login_ps.png' %}" class="g-password">
+            </div>
+            <img src="{% static 'image/login/login.png' %}" class="g-normal">
+
+            <button class="btn btn-primary btn-block login-button" type="submit" @click="login" id="login"><i class="fa fa-sign-in"></i> 登录</button>
+            <br>
+            <p>
+                <a href="/forget/" class="pull-left" style="color: #516151">忘记密码</a>
+                <a href="javascript:void(0)" class="pull-right" style="color: #2845af"  data-toggle="modal" data-target="#register">现在注册</a>
+            </p>
+        </div>
+
+<div class="box" style="position: absolute; z-index: 10">
+	<img src="{% static 'yz/image/cw.png' %}" class="cuo">
+	<span class="top-s">身份验证</span>
+	<span class="top-x">拖动滑块，使图片角度为正</span>
+	<div id="rotateWrap1">
+	<div class="rotateverify-contaniner">
+			<div class="rotate-can-wrap">
+				<canvas class="rotateCan rotate-can" width="200" height="200"></canvas>
+				<div class="statusBg status-bg"></div>
+			</div>
+			<div class="control-wrap slideDragWrap">
+				<div class="control-tips">
+					<p class="c-tips-txt cTipsTxt">滑动将图片转正</p>
+				</div>
+				<div class="control-bor-wrap controlBorWrap"></div>
+				<div class="control-btn slideDragBtn">
+					<i class="control-btn-ico"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+        <div class="block__cell" style="z-index: 20;display: none">
+            <a href="#" class="btn btn--waiting custom" id="btnActivation">
+                <span class="btn__icon"></span>
+                <span class="btn__text" data-wait="骚等一下！" data-after="验证通过！">骚等一下！</span>
+            </a>
+        </div>
+
+    <div class="modal fade" id="register">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <b>注册</b>
+                </div>
+                <div class="modal-body row">
+                    <div class="form-group col-xs-12 col-md-12">
+                            <label class="col-xs-3 col-md-3">用户名：</label>
+                            <input placeholder="用户名" type="text" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <label class="col-xs-3 col-md-3">密码：</label>
+                        <input placeholder="密码" type="password" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <label class="col-xs-3 col-md-3">邮箱：</label>
+                        <input placeholder="邮箱" type="email" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <label class="col-xs-3 col-md-3">性别：</label>
+                        <input placeholder="邮箱" type="email" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <label class="col-xs-3 col-md-3">密令：</label>
+                        <input placeholder="用于找回密码" type="text" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+
+                </div>
+                <div class="modal-footer"><button class="btn btn-info" data-dismiss="modal" @click="register">确认</button></div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="csrf_cal" style="display: none">{{ csrf_token }}</div>
+    {% endblock %}
+
+    {% block js %}
+
+        <script src="{% static 'yz/js/yz.js' %}" type="text/javascript" charset="utf-8"></script>
+
+        <script>
+            var loginht = new Vue({
+                el:'#login-div',
+                data:{
+                    username:'',
+                    password:'',
+                    csrf_val:'',
+                },
+                methods: {
+                    login: function () {
+                        var pass_verify = $("#verify").is(":disabled")
+                        {#console.log(pass_verify)#}
+                        if (pass_verify == false){
+                            alert("我怀疑你是个机器人!")
+                            return false
+                        }else if(this.username == ""){
+                            alert("忘记填账号啦!")
+                            return false
+                        }else if (this.password == ""){
+                            alert("密码是不是没填?")
+                            return false
+                        }else {
+                            this.$http.post('/login/',
+                                {
+                                    "username": this.username,
+                                    "password": this.password,
+                                    "csrfmiddlewaretoken": this.csrf_val,
+                                }, {emulateJSON: true}).then(function (res) {
+                                result = res.body["result"]
+                                console.log(result)
+                                if (result == 0){
+                                    alert("压根就没这个用户!!!")
+                                    return
+                                }else if (result == 2){
+                                    alert("密码好像不对吧!")
+                                    return
+                                }else if (result == 1){
+                                    alert("登录成功!");
+                                    setTimeout(function () {
+                                        window.location.href = "/blog_index/";
+                                     }, 1000);
+                                }else {
+                                    return
+                                }
+                            })
+                        }
+                    },
+                    register:function () {
+                        alert('budui')
+                    }
+                },
+                mounted:function () {
+                    {#console.log($('#csrf_cal').text())#}
+                    this.csrf_val = $('#csrf_cal').text();
+                    // 点击按钮
+                    $("#verify").click(function () {
+                        {#console.log('123123');#}
+                        $(".box").css("display", "block");
+                        $("body").css({ "background": "#807878" });
+                        $("#verify").attr("disabled", true);
+                    });
+                    //    点击x
+                    $(".cuo").click(function () {
+                        $(".box").css("display", "none");
+                        $("body").css("background", "#fff");
+                        $("#verify").attr("disabled", false);
+                    });
+                    //1
+                    var myRotateVerify = new RotateVerify('#rotateWrap1', {
+                        initText: '滑动将图片转正',//默认
+                        slideImage: ['{% static 'yz/image/1.png' %}', '{% static 'yz/image/2.png' %}', '{% static 'yz/image/4.png' %}', '{% static 'yz/image/5.png' %}'],//arr  [imgsrc1,imgsrc2] 或者str 'imgsrc1'
+                        slideAreaNum: 10,// 误差范围角度 +- 10(默认)
+                        getSuccessState: function (res) {//验证通过 返回  true;
+                             console.log('例1' + res);
+                             if(res == true){
+                                 {#$(".box").css("display", "none");#}
+                                 $('.block__cell').css("display", "");
+                                 $(document).ready(function () {
+                                     setTimeout(function () {
+                                         removeWaiting();
+                                     }, 400);
+                                     setTimeout(function () {
+                                         pass();
+                                     }, 1500);
+                                     function removeWaiting() {
+                                         $('#btnActivation').removeClass('btn--waiting');
+                                         $('#btnActivation').addClass('btn--activated');
+                                     };
+                                     function pass() {
+                                         $('.block__cell').css("display", "none");
+                                         $(".box").css("display", "none");
+                                     }
+
+                                 });
+
+
+
+                             }
+                        }
+                    });
+
+                    $("body").keydown(function () {
+                        if (event.keyCode == "13") {//keyCode=13是回车键
+                            $('#login').click();//换成按钮的id即可
+                        }
+                    });
+
+                },
+            })
+        </script>
+
+    {% endblock %}
+
+
+
+
+
+    <div class="modal fade" id="register"       data-toggle="modal" data-target="#register">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <b>注册</b>
+                </div>
+                <div class="modal-body row">
+                    <div class="form-group col-xs-12 col-md-12">
+                            <label class="col-xs-3 col-md-3">用户名：</label>
+                            <input placeholder="用户名" type="text" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <label class="col-xs-3 col-md-3">密码：</label>
+                        <input placeholder="密码" type="password" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <label class="col-xs-3 col-md-3">邮箱：</label>
+                        <input placeholder="邮箱" type="email" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <label class="col-xs-3 col-md-3">性别：</label>
+                        <input placeholder="邮箱" type="email" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <label class="col-xs-3 col-md-3">密令：</label>
+                        <input placeholder="用于找回密码" type="text" class="form-control col-xs-8 col-md-8" style="display: inline-block;width: auto">
+                    </div>
+
+                </div>
+                <div class="modal-footer"><button class="btn btn-info" data-dismiss="modal" @click="register">确认</button></div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,163 @@
+{% extends 'article.html' %}
+{% load static %}
+    {% block title %}<title xmlns="http://www.w3.org/1999/html">忘记密码</title>{% endblock %}
+    {% block css %}
+        <link href="{% static 'css/register.css' %}" rel="stylesheet" type="text/css">
+    {% endblock %}
+    {% block body %}
+        <div class="bruce flex-ct-x" id="register">
+            <div class="bubble-distribution">
+                <h2>注册</h2>
+                <div class="accout">
+                    <input type="text" placeholder="请输入注册用户名(2到8位字符)" v-model="username" autocomplete="off" pattern="^1[3456789]\d{9}$|^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$" required>
+                    <img src="{% static 'image/login/login_us.png' %}">
+                </div>
+                <div class="password">
+                    <input type="text" id="password" password="" placeholder="请输入密码(6到20位字符)" autocomplete="off" pattern="^[\dA-Za-z_]{6,20}$" required>
+                    <img src="{% static 'image/login/login_ps.png' %}">
+                </div>
+                <div class="accout">
+                    <input type="text" placeholder="请输入邮箱" v-model="email" pattern="^[\d]{6}$" required>
+                    <img src="{% static 'image/login/login_us.png' %}">
+                </div>
+                <div class="accout">
+                    <input type="text" placeholder="请输入密令(用于找回密码)" v-model="key" pattern="^[\d]{6}$" required>
+                    <img src="{% static 'image/login/login_ps.png' %}">
+                </div>
+                <img src="{% static 'image/login/login.png' %}">
+                <ul>
+                    <li style="background-color: #e2f8e6;border-radius: 14px">
+                        <input id="male" type="radio" name="sex" v-model="sex" value="male">
+                        <label for="male">男生</label>
+                    </li>
+                    <li style="background-color: #e2f8e6;border-radius: 14px">
+                        <input id="female" type="radio" name="sex" v-model="sex" value="female">
+                        <label for="female">女生</label>
+                    </li>
+                </ul>
+                <button type="button" @click="register" style="margin-bottom: 14px">注册</button>
+                <br>
+                <p>
+                    <a href="/forget/" class="pull-left" style="color: #516151">忘记密码</a>
+                    <a href="/login/" class="pull-right" style="color: #2845af">去登陆</a>
+                </p>
+            </div>
+        </div>
+
+
+
+        <div id="csrf_cal" style="display: none">{{ csrf_token }}</div>
+    {% endblock %}
+
+    {% block js %}
+        <script>
+            var loginht = new Vue({
+                el:'#register',
+                data:{
+                    username:'',
+                    email:'',
+                    key:'',
+                    sex:'',
+                    csrf_val:'',
+                },
+                methods: {
+                    register:function () {
+                        var email_reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+                        var username_reg = /^[0-9a-zA-z_]{2,8}$/;
+                        var password = $("#password").attr('password');
+                        {#console.log(username_reg.test(this.username))#}
+                        {#console.log(this.username,this.email,this.key,this.sex,password)#}
+                        if (this.username == ''){
+                            alert('用户名都不填啊!');
+                            return false
+                        }else if(password == ''){
+                            alert('密码还没写!');
+                            return false
+                        }else if(this.email == ''){
+                            alert('邮箱没填!');
+                            return false
+                        }else if(this.sex == ''){
+                            alert('你是男是女?');
+                            return false
+                        }else if(this.key == ''){
+                            alert('不写密令忘记密码咋办?');
+                            return false
+                        }else if(!this.email.match(email_reg)){
+                            alert('邮箱格式不正确!');
+                            return false
+                        }else if(!username_reg.test(this.username)){
+                            alert('用户名必须由字母、数字或下划线组成且长度为2-8!');
+                            return false
+                        }else if(password.length > 20 || password.length < 6){
+                            alert('密码长度为6-20!');
+                            return false
+                        }else {
+                            this.$http.post('/register/',{
+                                "username": this.username,
+                                "password": password,
+                                "email": this.email,
+                                "key": this.key,
+                                "sex": this.sex,
+                                "csrfmiddlewaretoken": this.csrf_val,
+                            }, {emulateJSON: true}).then(function (res) {
+                                result = res.body["result"];
+                                console.log(result)
+                                if (result == 1){
+                                    alert('该用户已存在!');
+                                    return
+                                }else if(result == 2){
+                                    alert('该邮箱已被注册!');
+                                    return
+                                }else if(result == 0){
+                                    alert('注册成功!');
+                                    window.location.href = "/login/";
+                                    return
+                                }
+                            })
+                        };
+                        {#console.log(this.sex)#}
+                    },
+                },
+                mounted:function () {
+                    this.csrf_val = $('#csrf_cal').text();
+
+                    document.getElementById("password").addEventListener('input', function () {
+                            var _this = this;
+                            var newPassword = _this.value;
+                            var oldPassword = _this.getAttribute("password");
+                            var deta = newPassword.length - oldPassword.length;
+
+                            var truePassword = "";
+                            var p = _this.selectionEnd;//光标结束时的位置
+
+                            for (var i = 0; i < newPassword.length; i++) {
+                                var c = newPassword.charAt(i);
+                                if (i < p && c != '●') {
+                                    truePassword += c;
+                                } else if (i < p && c == '●') {
+                                    truePassword += oldPassword.charAt(i);
+                                } else {
+                                    truePassword += oldPassword.substr(oldPassword.length - newPassword.length + p, newPassword.length - p);
+                                    break;
+                                }
+
+                            }
+                            newPassword = truePassword.replace(/\S/g, '●');
+
+                            _this.setAttribute('password', truePassword);
+                            _this.value = newPassword;
+                            // 解决在win8中光标总是到input框的最后
+                            _this.selectionEnd = p;
+                            _this.selectionStart = p;
+
+                            $("#realpwd").val(truePassword);
+                            //console.log(truePassword);
+                        }, false);
+
+
+                },
+            })
+        </script>
+
+    {% endblock %}
+

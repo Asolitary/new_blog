@@ -1,0 +1,169 @@
+.bubble-distribution {
+  margin-top: 50px;
+  padding: 25px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 2px;
+  width: 320px;
+  background-color: #fff;
+}
+.bubble-distribution h3 {
+  font-size: 16px;
+  color: #333;
+}
+.bubble-distribution div {
+  margin-top: 10px;
+}
+.bubble-distribution img {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  margin: 0 0 -20px -60px;
+  width: 120px;
+}
+.bubble-distribution ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  height: 30px;
+  line-height: 30px;
+}
+.bubble-distribution li {
+  position: relative;
+  width: 45%;
+  transition: all 300ms;
+}
+.bubble-distribution li:focus-within {
+  background: linear-gradient(90deg, #4df56b 50%, transparent 0) repeat-x, linear-gradient(90deg, #4df56b 50%, transparent 0) repeat-x, linear-gradient(0deg, #4df56b 50%, transparent 0) repeat-y, linear-gradient(0deg, #4df56b 50%, transparent 0) repeat-y;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  background-size: 8px 1px, 8px 1px, 1px 8px, 1px 8px;
+  -webkit-animation: move 500ms infinite linear;
+          animation: move 500ms infinite linear;
+}
+.bubble-distribution input[type=text],
+.bubble-distribution input[type=password] {
+  padding: 10px;
+  border: 1px solid #76cef4;
+  border-radius: 14px;
+  width: 100%;
+  height: 40px;
+  outline: none;
+  transition: all 300ms;
+}
+.bubble-distribution input[type=text]:focus:valid,
+.bubble-distribution input[type=password]:focus:valid {
+  border-color: #09f;
+}
+.bubble-distribution input[type=text]:focus:invalid,
+.bubble-distribution input[type=password]:focus:invalid {
+  /*border-color: #f66;*/
+}
+.bubble-distribution input[type=radio] {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.bubble-distribution input[type=radio]:checked + label {
+  border: 3px solid transparent;
+  background-color: #80ea93;
+  color: #fff;
+  border-radius:14px;
+}
+.bubble-distribution label {
+  display: block;
+  border-bottom: 1px solid #66f57e;
+  width: 100%;
+  background-clip: padding-box;
+  cursor: pointer;
+  text-align: center;
+  transition: all 300ms;
+}
+.bubble-distribution button {
+  margin-top: 10px;
+  border: none;
+  border-radius: 14px;
+  width: 100%;
+  height: 40px;
+  outline: none;
+  background-color: #1f7fe5;
+  cursor: pointer;
+  color: #fff;
+  transition: all 300ms;
+}
+.bubble-distribution .accout img,
+.bubble-distribution .password img,
+.bubble-distribution .code img {
+  display: none;
+  margin-bottom: -27px;
+}
+.bubble-distribution .accout:focus-within img,
+.bubble-distribution .password:focus-within img,
+.bubble-distribution .code:focus-within img {
+  display: block;
+}
+.bubble-distribution .accout:focus-within ~ img,
+.bubble-distribution .password:focus-within ~ img,
+.bubble-distribution .code:focus-within ~ img {
+  display: none;
+}
+.bubble-distribution .code {
+  display: flex;
+  justify-content: space-between;
+}
+.bubble-distribution .code button {
+  margin-top: 0;
+}
+.bubble-distribution .code input:not(:-moz-placeholder-shown) {
+  width: 70%;
+}
+.bubble-distribution .code input:not(:-ms-input-placeholder) {
+  width: 70%;
+}
+.bubble-distribution .code input:not(:placeholder-shown) {
+  width: 70%;
+}
+.bubble-distribution .code input:not(:-moz-placeholder-shown) + button {
+  width: 25%;
+}
+.bubble-distribution .code input:not(:-ms-input-placeholder) + button {
+  width: 25%;
+}
+.bubble-distribution .code input:not(:placeholder-shown) + button {
+  width: 25%;
+}
+.bubble-distribution .code input:-moz-placeholder-shown {
+  width: 100%;
+}
+.bubble-distribution .code input:-ms-input-placeholder {
+  width: 100%;
+}
+.bubble-distribution .code input:placeholder-shown {
+  width: 100%;
+}
+.bubble-distribution .code input:-moz-placeholder-shown + button {
+  width: 0;
+  opacity: 0;
+}
+.bubble-distribution .code input:-ms-input-placeholder + button {
+  width: 0;
+  opacity: 0;
+}
+.bubble-distribution .code input:placeholder-shown + button {
+  width: 0;
+  opacity: 0;
+}
+
+@-webkit-keyframes move {
+  to {
+    background-position: 6% 0, -6% 100%, 0 -6%, 100% 6%;
+  }
+}
+
+@keyframes move {
+  to {
+    background-position: 6% 0, -6% 100%, 0 -6%, 100% 6%;
+  }
+}
